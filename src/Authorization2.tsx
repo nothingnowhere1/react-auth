@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Authorization() {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
+export default function Authorization2() {
+	const refEmail = useRef<HTMLInputElement>(null)
+	const refPassword = useRef<HTMLInputElement>(null)
+
 	const [error, setError] = useState(false);
 	const navigate = useNavigate();
 
 	const onSubmit = () => {
 		// Фетч запрос
-		if (password === '111' && email !== '') {
+		if (refEmail.current && refEmail.current.value !== '' && refPassword.current && refPassword.current.value === '111') {
 			navigate('/yep');
 		}
 		setError(true);
@@ -32,7 +33,7 @@ export default function Authorization() {
 						padding:'10px 20px 10px 20px',
 						border:'none',
 						boxShadow: '0px 5px 7px 2px black',
-					}} value={email} onChange={(e) => setEmail(e.target.value)} type={'email'}/>
+					}} ref={refEmail} type={'email'}/>
 				</div>
 				<div style={{
 					display: 'flex', flexDirection: 'column', gap: '8px',
@@ -46,10 +47,7 @@ export default function Authorization() {
 						width:'200px',
 						border:'none',
 						boxShadow: '0px 5px 7px 2px black',
-					}} value={password} onChange={(e) => {
-						setPassword(e.target.value);
-						setError(false);
-					}} type={'password'}/>
+					}} ref={refPassword} type={'password'}/>
 				</div>
 				{error && <div style={{
 					color:'red'
