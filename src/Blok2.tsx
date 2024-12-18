@@ -1,6 +1,12 @@
 import React, { useRef, useState } from 'react';
 
 function babyStepGiantStep(g:number, h:number, p:number) {
+
+	// Дополнительная проверка на ноль
+	if (h%p === 1) {
+		return 0;
+	}
+
 	const n = Math.ceil(Math.sqrt(p))
 	const values = new Map();
 
@@ -17,10 +23,10 @@ function babyStepGiantStep(g:number, h:number, p:number) {
 			const j = values.get(current);
 			return k * n + j;
 		}
-		current = (current * post * g**k) % p;
+		current = (current * post) % p;
 	}
 
-	return undefined;
+	return null;
 }
 
 export const Blok2 = () => {
@@ -28,7 +34,7 @@ export const Blok2 = () => {
 	const value = useRef<HTMLInputElement>(null);
 	const module = useRef<HTMLInputElement>(null);
 
-	const [result, setResult] = useState<number|null>(null);
+	const [result, setResult] = useState<number|null | string>(null);
 	const [error, setError] = useState<string | null>(null);
 
 	const calculate = () => {
@@ -36,7 +42,9 @@ export const Blok2 = () => {
 			const gen = +(generator.current?.value);
 			const val = +(value.current?.value);
 			const mod = +(module.current?.value);
-			setResult(babyStepGiantStep(gen, val, mod) ?? 'Нет такого числа')
+			const res = babyStepGiantStep(gen, val, mod);
+			setResult(typeof res === 'number' ? res + `+${mod-1}k` :  null)
+			setError(typeof res === 'number' ? null : 'Нет такого числа');
 		}
 	}
 
@@ -53,9 +61,10 @@ export const Blok2 = () => {
 			<input onChange={onChange} placeholder={'Значение'} ref={value}/>
 			<input onChange={onChange} placeholder={'Модуь'} ref={module}/>
 			<button onClick={calculate}>Решаем</button>
-			<div style={{
+			{result &&
+				<div style={{
 				fontSize: '40px', color: 'red'
-			}}>{result}</div>
+				}}> log<sub>{generator.current?.value}</sub> {value.current?.value} (mod {module.current?.value}) = {result}</div>}
 			<div style={{
 				fontSize: '40px', color: 'red'
 			}}>{error}</div>
